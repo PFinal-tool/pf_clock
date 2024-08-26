@@ -9,7 +9,7 @@
     <Flipper ref="flipperSecond1" />
     <Flipper ref="flipperSecond2" />
   </div>
-
+  
 </template>
 
 <script>

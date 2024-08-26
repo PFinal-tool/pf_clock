@@ -1,16 +1,19 @@
 <template>
   <div id="app" @dblclick="toggleTimer" @keydown="handleKeydown" tabindex="0" >
     <FlipClock ref="flipClock"></FlipClock>
+    <ClockSetter ref="clockSetter"></ClockSetter>
   </div>
 </template>
 
 <script>
+import ClockSetter from './components/ClockSetter.vue';
 import FlipClock from './components/FlipClock.vue';
 
 export default {
   name: 'app',
   components: {
-    FlipClock
+    FlipClock,
+    ClockSetter
   },
   data() {
     return {
