@@ -2,10 +2,10 @@ package main
 
 import (
 	"embed"
-
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 )
 
 //go:embed all:frontend/dist
@@ -26,10 +26,21 @@ func main() {
 		Frameless:        true,
 		DisableResize:    true,
 		AlwaysOnTop:      true,
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
+		},
+		Mac: &mac.Options{
+			TitleBar:             nil,
+			Appearance:           "",
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			Preferences:          nil,
+			DisableZoom:          false,
+			About:                nil,
+			OnFileOpen:           nil,
+			OnUrlOpen:            nil,
 		},
 	})
 
