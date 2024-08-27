@@ -1,12 +1,12 @@
 <template>
   <div id="app" @dblclick="toggleTimer" @keydown="handleKeydown" tabindex="0">
-    <FlipClock ref="flipClock"></FlipClock>
+    <FlipClock ref="flipClockRef"></FlipClock>
     <ClockSetter :appConfig="appConfig"></ClockSetter>
   </div>
 </template>
 
 <script>
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { GetAppConfig } from '../wailsjs/go/main/App';
 import ClockSetter from './components/ClockSetter.vue';
 import FlipClock from './components/FlipClock.vue';
@@ -20,6 +20,8 @@ export default {
   setup() {
     const appConfig = reactive({});
     const lastKey = ref('');
+    const flipClockRef = ref(null);
+    const isFlipClockMounted = ref(false); // Flag to check if FlipClock is mounted
 
     // 获取配置信息
     GetAppConfig().then(config => {
@@ -29,15 +31,18 @@ export default {
     });
 
     const start = () => {
-      if (flipClockRef.value) {
+      if (flipClockRef.value && isFlipClockMounted.value) {
+        console.log('FlipClock is mounted and ready to start');
         flipClockRef.value.start();
       } else {
         console.error('FlipClock component is not yet mounted.');
+        console.log('flipClockRef.value:', flipClockRef.value);
       }
     };
 
     const resetFlipClock = () => {
-      if (flipClockRef.value) {
+      if (flipClockRef.value && isFlipClockMounted.value) {
+        console.log('Resetting FlipClock');
         flipClockRef.value.reset();
       }
     };
@@ -53,11 +58,13 @@ export default {
       lastKey.value = event.key;
     };
 
-    const flipClockRef = ref(null);
-
-    onMounted(() => {
+    onMounted(async () => {
+      await nextTick(); // Wait for the DOM to update
+      console.log(flipClockRef.value)
       document.getElementById('app').focus();
       window.addEventListener('keydown', handleKeydown);
+      isFlipClockMounted.value = true;
+      console.log('App mounted');
     });
 
     onBeforeUnmount(() => {
@@ -68,6 +75,8 @@ export default {
       appConfig,
       lastKey,
       flipClockRef,
+      start,
+      resetFlipClock
     };
   }
 }

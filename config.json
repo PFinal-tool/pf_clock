@@ -1,6 +1,7 @@
 {
   "clock_bg_color":"#FFFFFF",
   "clock_text_color":"#00000",
-  "text_bg_color":"#EDEDED",
+  "text_bg_color":"#1ab394",
+  "text_color":"red",
   "text_content":"PFinalClub专业的技术社区"
 }
