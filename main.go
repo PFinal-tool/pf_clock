@@ -19,7 +19,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "clock",
 		Width:  450,
-		Height: 170,
+		Height: 175,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

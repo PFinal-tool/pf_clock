@@ -1,61 +1,74 @@
 <template>
-  <div id="app" @dblclick="toggleTimer" @keydown="handleKeydown" tabindex="0" >
+  <div id="app" @dblclick="toggleTimer" @keydown="handleKeydown" tabindex="0">
     <FlipClock ref="flipClock"></FlipClock>
-    <ClockSetter ref="clockSetter"></ClockSetter>
+    <ClockSetter :appConfig="appConfig"></ClockSetter>
   </div>
 </template>
 
 <script>
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { GetAppConfig } from '../wailsjs/go/main/App';
 import ClockSetter from './components/ClockSetter.vue';
 import FlipClock from './components/FlipClock.vue';
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     FlipClock,
     ClockSetter
   },
-  data() {
-    return {
-      lastKey: ''
-    }
-  },
-  mounted() {
-    // 使 div 可以接收焦点
-    this.$el.focus()
-    // 全局监听键盘事件
-    window.addEventListener('keydown', this.handleKeydown)
-  },
-  beforeDestroy() {
-    // 移除全局事件监听
-    window.removeEventListener('keydown', this.handleKeydown)
-  },
-  methods: {
-    start() {
-      // 确保引用存在后再调用方法
-      if (this.$refs.flipClock) {
-        this.$refs.flipClock.start()
+  setup() {
+    const appConfig = reactive({});
+    const lastKey = ref('');
+
+    // 获取配置信息
+    GetAppConfig().then(config => {
+      Object.assign(appConfig, config);
+    }).catch(error => {
+      console.error('Error fetching config:', error);
+    });
+
+    const start = () => {
+      if (flipClockRef.value) {
+        flipClockRef.value.start();
       } else {
-        console.error('FlipClock component is not yet mounted.')
+        console.error('FlipClock component is not yet mounted.');
       }
-    },
-    resetFlipClock() {
-      if (this.$refs.flipClock) {
-        this.$refs.flipClock.reset()
+    };
+
+    const resetFlipClock = () => {
+      if (flipClockRef.value) {
+        flipClockRef.value.reset();
       }
-    },
-    handleKeydown(event) {
-      // 监听 "ss" 按键
+    };
+
+    const handleKeydown = (event) => {
       if (event.key === 's') {
-        this.start()
-      }else if (event.key === 'p'){
-        this.$refs.flipClock.pause()
-      }else if (event.key === 'r'){
-        this.resetFlipClock()
+        start();
+      } else if (event.key === 'p') {
+        flipClockRef.value.pause();
+      } else if (event.key === 'r') {
+        resetFlipClock();
       }
-      // 更新最后按下的键
-      this.lastKey = event.key
-    }
+      lastKey.value = event.key;
+    };
+
+    const flipClockRef = ref(null);
+
+    onMounted(() => {
+      document.getElementById('app').focus();
+      window.addEventListener('keydown', handleKeydown);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('keydown', handleKeydown);
+    });
+
+    return {
+      appConfig,
+      lastKey,
+      flipClockRef,
+    };
   }
 }
 </script>
