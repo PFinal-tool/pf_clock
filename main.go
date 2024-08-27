@@ -3,9 +3,13 @@ package main
 import (
 	"embed"
 	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	wr "github.com/wailsapp/wails/v2/pkg/runtime"
+	"runtime"
 )
 
 //go:embed all:frontend/dist
@@ -14,12 +18,22 @@ var assets embed.FS
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+	AppMenu := menu.NewMenu()
+	ColckMenu := AppMenu.AddSubmenu("File")
+	ColckMenu.AddText("退出", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
+		wr.Quit(app.ctx)
+	})
+
+	if runtime.GOOS == "darwin" {
+		AppMenu.Append(menu.EditMenu()) // on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+	}
 
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "clock",
 		Width:  450,
 		Height: 175,
+		Menu:   AppMenu, // reference the menu above
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
