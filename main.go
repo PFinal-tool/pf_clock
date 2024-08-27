@@ -15,6 +15,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed build/appicon.png
+var icon []byte
+
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
@@ -52,9 +55,13 @@ func main() {
 			WindowIsTranslucent:  true,
 			Preferences:          nil,
 			DisableZoom:          false,
-			About:                nil,
-			OnFileOpen:           nil,
-			OnUrlOpen:            nil,
+			About: &mac.AboutInfo{
+				Title:   "PFClock",
+				Message: "PFinalClub Clock",
+				Icon:    icon,
+			},
+			OnFileOpen: nil,
+			OnUrlOpen:  nil,
 		},
 	})
 
