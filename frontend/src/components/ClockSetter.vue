@@ -3,12 +3,13 @@
     <span :class="[tipsClass, 'marquee']">
       <h5>{{ tips }}</h5>
     </span>
-    <span :class="iconClass"></span>
+    <span :class="iconClass" @click="settingClick"></span>
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch, watchEffect } from 'vue';
+import { Setting } from '../../wailsjs/go/main/App';
 
 export default defineComponent({
   name: 'ClockSetter',
@@ -23,45 +24,20 @@ export default defineComponent({
     const iconClass = 'icon-[material-symbols--settings] text-blue-300 w-1/12';
     const tips = ref('PFinalClub');
     const tipsClass = 'w-11/12 overflow-hidden';
-    const computedStyle = ref('');
-    // Create a reactive reference to props.appConfig
-    const appConfig = ref(props.appConfig);
+    const computedStyle = ref({});
 
-    watch(() => props.appConfig, (newConfig) => {
-       if (newConfig) {
-          appConfig.value = newConfig;
-        }
-        if (props.appConfig && props.appConfig.text_content) {
-          tips.value = props.appConfig.text_content;
-        }
-        const style = {};
-        if (props.appConfig && props.appConfig.text_color) {
-          style.color = props.appConfig.text_color;
-        }
-        if (props.appConfig && props.appConfig.text_bg_color) {
-          style.backgroundColor = props.appConfig.text_bg_color;
-        }
-        computedStyle.value = style;
-    }, { deep: true });
+    const settingClick = () => {
+      console.log('设置按钮被点击了');
+      console.log(Setting())
+    };
 
-    onMounted(() => {
-      try {
-        // Set initial value based on appConfig
-        if (props.appConfig && props.appConfig.text_content) {
-          tips.value = props.appConfig.text_content;
-        }
-        const style = {};
-        if (props.appConfig && props.appConfig.text_color) {
-          style.color = props.appConfig.text_color;
-        }
-        if (props.appConfig && props.appConfig.text_bg_color) {
-          style.backgroundColor = props.appConfig.text_bg_color;
-        }
-        computedStyle.value = style;
-        console.log(computedStyle)
-      } catch (error) {
-        console.error('Error in onMounted callback:', error);
-      }
+    watchEffect(() => {
+      const config = props.appConfig;
+      tips.value = config.text_content || 'PFinalClub';
+      computedStyle.value = {
+        color: config.text_color || '',
+        backgroundColor: config.text_bg_color || ''
+      };
     });
 
     return {
@@ -69,8 +45,8 @@ export default defineComponent({
       iconClass,
       tips,
       tipsClass,
-      appConfig,
-      computedStyle
+      computedStyle,
+      settingClick
     };
   }
 });
@@ -80,17 +56,28 @@ export default defineComponent({
 .marquee {
   overflow: hidden;
 }
+
 .marquee h5 {
-  animation: marquee 8s linear infinite;
+  animation: marquee 4s linear infinite;
 }
 
 @keyframes marquee {
-  from {
-    transform: translateX(100%);
+  0%,
+  100% {
+    transform: translateX(-25%);
   }
 
-  to {
-    transform: translateX(-100%);
+  50% {
+    transform: translateX(25%);
+  }
+}
+
+@-webkit-keyframes marquee {
+  0% {
+    -webkit-transform: translateX(100%);
+  }
+  100% {
+    -webkit-transform: translateX(-100%);
   }
 }
 </style>

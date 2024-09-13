@@ -9,3 +9,11 @@ export function GetAppConfig() {
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
+
+export function SetAppConfig(arg1) {
+  return window['go']['main']['App']['SetAppConfig'](arg1);
+}
+
+export function Setting() {
+  return window['go']['main']['App']['Setting']();
+}

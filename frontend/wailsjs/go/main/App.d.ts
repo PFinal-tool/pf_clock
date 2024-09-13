@@ -5,3 +5,7 @@ import {main} from '../models';
 export function GetAppConfig():Promise<main.Config>;
 
 export function Greet(arg1:string):Promise<string>;
+
+export function SetAppConfig(arg1:main.Config):Promise<void>;
+
+export function Setting():Promise<string>;

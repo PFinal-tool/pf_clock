@@ -5,6 +5,8 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 //go:embed config.json
@@ -46,11 +48,11 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) initConfig() {
 	configPath := "config.json"
-	confg, err := a.loadDictsFromEmbedFS(configPath)
+	config, err := a.loadDictsFromEmbedFS(configPath)
 	if err != nil {
 		fmt.Println(err)
 	}
-	a.Config = confg
+	a.Config = config
 }
 
 func (a *App) loadDictsFromEmbedFS(fileName string) (Config, error) {
@@ -71,6 +73,18 @@ func (a *App) loadDictsFromEmbedFS(fileName string) (Config, error) {
 
 func (a *App) GetAppConfig() Config {
 	return a.Config
+}
+
+func (a *App) SetAppConfig(config Config) {
+	a.Config = config
+}
+
+func (a *App) Setting() string {
+	runtime.WindowSetSize(a.ctx, 1000, 675)
+	runtime.WindowReload(a.ctx)
+	configString := fmt.Sprintf("%+v", a.Config)
+	fmt.Println(configString)
+	return configString
 }
 
 // Greet returns a greeting for the given name
