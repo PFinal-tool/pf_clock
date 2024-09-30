@@ -72,6 +72,7 @@ func (a *App) loadDictsFromEmbedFS(fileName string) (Config, error) {
 }
 
 func (a *App) GetAppConfig() Config {
+	fmt.Println(a.Config)
 	return a.Config
 }
 
@@ -80,13 +81,17 @@ func (a *App) SetAppConfig(config Config) {
 }
 
 func (a *App) Setting() string {
-	runtime.WindowSetSize(a.ctx, 1000, 675)
-	runtime.WindowReload(a.ctx)
+	runtime.WindowSetSize(a.ctx, 600, 600)
+	// runtime.WindowReload(a.ctx)
 	configString := fmt.Sprintf("%+v", a.Config)
 	fmt.Println(configString)
 	return configString
 }
 
+func (a *App) Reload() {
+	runtime.WindowSetSize(a.ctx, 450, 175)
+	runtime.WindowReload(a.ctx)
+}
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)

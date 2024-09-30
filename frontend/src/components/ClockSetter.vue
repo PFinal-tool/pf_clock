@@ -8,35 +8,39 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, watch, watchEffect } from 'vue';
-import { Setting } from '../../wailsjs/go/main/App';
+import { defineComponent, ref, watchEffect } from "vue";
+import { Setting } from "../../wailsjs/go/main/App";
 
 export default defineComponent({
-  name: 'ClockSetter',
+  name: "ClockSetter",
   props: {
     appConfig: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  setup(props) {
-    const containerClass = 'w-11/12 h-10 bg-gray-200 rounded-lg flex justify-center items-center m-auto overflow-hidden';
-    const iconClass = 'icon-[material-symbols--settings] text-blue-300 w-1/12';
-    const tips = ref('PFinalClub');
-    const tipsClass = 'w-11/12 overflow-hidden';
+  setup(props, { emit }) {
+    const containerClass =
+      "w-11/12 h-10 bg-gray-200 rounded-lg flex justify-center items-center m-auto overflow-hidden";
+    const iconClass = "icon-[material-symbols--settings] text-blue-300 w-1/12";
+    const tips = ref("PFinalClub");
+    const tipsClass = "w-11/12 overflow-hidden";
     const computedStyle = ref({});
 
     const settingClick = () => {
-      console.log('设置按钮被点击了');
-      console.log(Setting())
+      console.log("设置按钮被点击了");
+      console.log(Setting());
+
+      // 发出事件给父组件，切换 ClockSetter 和 FlipClock 的显示
+      emit("toggle-visibility");
     };
 
     watchEffect(() => {
       const config = props.appConfig;
-      tips.value = config.text_content || 'PFinalClub';
+      tips.value = config.text_content || "PFinalClub";
       computedStyle.value = {
-        color: config.text_color || '',
-        backgroundColor: config.text_bg_color || ''
+        color: config.text_color || "",
+        backgroundColor: config.text_bg_color || "",
       };
     });
 
@@ -46,9 +50,9 @@ export default defineComponent({
       tips,
       tipsClass,
       computedStyle,
-      settingClick
+      settingClick,
     };
-  }
+  },
 });
 </script>
 
@@ -66,18 +70,8 @@ export default defineComponent({
   100% {
     transform: translateX(-25%);
   }
-
   50% {
     transform: translateX(25%);
-  }
-}
-
-@-webkit-keyframes marquee {
-  0% {
-    -webkit-transform: translateX(100%);
-  }
-  100% {
-    -webkit-transform: translateX(-100%);
   }
 }
 </style>

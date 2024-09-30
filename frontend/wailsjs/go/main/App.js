@@ -10,6 +10,10 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function Reload() {
+  return window['go']['main']['App']['Reload']();
+}
+
 export function SetAppConfig(arg1) {
   return window['go']['main']['App']['SetAppConfig'](arg1);
 }
